@@ -21,6 +21,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'role'
     ];
 
     /**
@@ -38,11 +39,28 @@ class User extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'password' => 'hashed',
+    ];
+
+    public function isAdmin()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->role === 'admin';
+    }
+
+    public function isWriter()
+    {
+        return $this->role === 'writer';
+    }
+
+    public function isDrafter()
+    {
+        return $this->role === 'drafter';
+    }
+
+    public function hasRole($role)
+    {
+        return $this->role === $role;
     }
 }
