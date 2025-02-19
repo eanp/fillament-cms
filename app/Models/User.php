@@ -1,25 +1,48 @@
 <?php
+
 namespace App\Models;
 
+// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Spatie\Permission\Traits\HasRoles;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    use HasRoles;
+    /** @use HasFactory<\Database\Factories\UserFactory> */
+    use HasFactory, Notifiable;
 
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class);
-    }
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var list<string>
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+    ];
 
-    public function hasRole($role)
-    {
-        return $this->roles()->where('name', $role)->exists();
-    }
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var list<string>
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
 
-    public function hasAnyRole($roles)
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array
     {
-        return $this->roles()->whereIn('name', (array) $roles)->exists();
+        return [
+            'email_verified_at' => 'datetime',
+            'password' => 'hashed',
+        ];
     }
 }
